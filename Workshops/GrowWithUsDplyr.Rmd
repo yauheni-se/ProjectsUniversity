@@ -1,0 +1,1124 @@
+---
+title: "![](C:/R/pict.png)"
+author: "Yauheni Semianiuk"
+date: "09.03.2021"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+    number_sections: yes
+    df_print: paged
+    css: custom.css
+---
+<style type="text/css">
+ .main-container {
+   max-width: 1900px;
+   margin-left: auto;
+   margin-rigth: auto;
+   background-color: #FCFCFC;
+}
+ 
+ h1.title {
+  font: "Arial"
+  font-size: 38px;
+  font-weight: 600;
+  color: Black;
+  text-align: center;
+}
+
+.author, .date {
+  font-size: 18px;
+  font: "Arial";
+  color: Black;
+  text-align: center;  
+}
+
+body{
+  font: "Arial";
+  font-size: 16px;
+}
+</style>
+
+```{css, echo=FALSE}
+.watch-out {
+  font-weight: normal;
+  font-size: 16px;
+  background-color: floralWhite;
+  border: 1px floralWhite;
+  font-family: "Arial";   #"Computer Modern"
+}
+```
+```{r include=FALSE}
+knitr::opts_chunk$set(class.source = "watch-out", comment = NA, message=FALSE, warning = FALSE)
+```
+```{r include=FALSE}
+library(kableExtra)
+library(rmarkdown)
+library(knitr)
+```
+
+<div align="justify">
+
+> Wszystkie szczęśliwe rodziny są do siebie podobne; każda nieszczęśliwa rodzina jest nieszczęśliwa na swój sposób.  
+  *Leo Tołstoy*  
+
+> Wszystkie uporządkowane dane są do siebie podobne; każde nieuporządkowane dane są nieuporządkowane na swój sposób.  
+  *Hadley Wickham*  
+
+# Tidyverse
+
+<hr style="border:2px solid silver"> </hr>
+
+Nauka o danych to ekscytująca dyscyplina, która pozwala przekształcić surowe dane w wiedzę. Dane mogą przybierać różne kształty i formy. Często oznacza to, że wiele czasu spędza się na modyfikowaniu danych. W R różne pakiety mogą mieć różne oczekiwania co do struktur danych, co może utrudniać przechodzenie między funkcjami w różnych pakietach. `Tidyverse` to taka kolekcja pakietów języka R przepracowana przez *Hadley Wickham'a*, która jest przeznaczona do interakcji z danymi w spójny sposób i z określoną filozofią. Głównym celem `tidyverse` jest ułatwienie komunikacji pomiędzy człowiekiem a komputerem. Jest to szczególnie ważne w przypadku R'a, ponieważ jest to język używany głównie przez osoby niebędące programistami. Według pakietu `tidyverse` zbiór danych można uznać za „uporządkowany”, jeżeli:  
+
+- każda zmienna znajduje się w osobnej kolumnie,  
+- każda obserwacja znajduje się w osobnym rzędzie,  
+- każda wartość znajduje się w osobnej komórce.  
+
+Korzyści z utrzymania spójnego podejścia do struktur danych staną się bardziej jasne w miarę pracy z danymi w R. Przekonamy się, że przekształcając dane w uporządkowany sposób, wszystkie późniejsze prace będą łatwiejsze do zrozumienia i sprawią, że kod będzie bardziej przejrzysty.  
+
+Tidyverse obejmuje powtarzające się zadania stanowiące część każdego projektu z zakresu analizy danych:  
+
+- pobieranie,  
+- uporządkowanie,  
+- przekształcanie,  
+- wizualizacja i modelowanie,  
+- raportowanie.  
+
+Przepływ pracy w `tidyverse` wygląda następująco:  
+
+<center>
+
+![](https://tidyverse.tidyverse.org/articles/data-science.png)  
+
+</center>
+
+1. Najpierw musimy zaimportować dane do R. Zwykle oznacza to, że pobieramy dane pochodzące z pliku, bazy danych lub strony internetowej i ładujemy je do R. Import danych jest obsługiwany głównie przez pakiet `readr`.  
+
+2. Po zaimportowaniu danych warto je uporządkować. Uporządkowane dane są ważne, ponieważ spójna struktura pozwala skupić się na problemach dotyczących danych, a nie walczyć o nadanie im odpowiedniej formy dla różnych funkcji. Pakiet `tidyr` zapewnia takie narzędzia.  
+
+3. Gdy mamy uporządkowane dane, najczęściej pierwszym krokiem jest ich przekształcenie. Transformacja obejmuje zawężenie interesujących obserwacji (np. wszyscy ludzie w jednym mieście lub wszystkie dane z ostatniego roku), tworzenie nowych zmiennych, które są funkcjami istniejących zmiennych (np. prędkość na podstawie odległości i czasu) oraz obliczanie zestawu statystyk podsumowujących (np. liczebności lub średnie). Transformacja danych jest obsługiwana przez pakiet `dplyr`, o którym będzie mowa na dzisiejszym warsztacie. `dplyr` wprowadza funkcje, które działają na pojedynczych zbiorach oraz umożliwiają łączenie wielu tabel. `dplyr` jest często wykorzystany z innnymi pakietami `tidyverse`, które zapewniają wygodne narzędzia dla pracy z pewnymi klasami danych:  
+
+- `stringr` dla klasy *string*,  
+- `forcats` dla klasy *factor*,  
+- `lubridate` dla klasą *date* i *datetime*.  
+
+4. Gdy mamy uporządkowane dane z potrzebnymi zmiennymi, istnieją dwa główne silniki generowania wiedzy: wizualizacja i modelowanie. Mają one uzupełniające się mocne i słabe strony, więc każda prawdziwa analiza będzie zawierała obie metody. Tidyverse udostępnia pakiet `ggplot2` do pięknej wizualizacji danych. Modelowanie jest jednak poza zakresem obecnego zestawu warsztatów.  
+
+5. Ostatnim etapem pracy z danymi jest komunikacja. Nie ma znaczenia, jak dobrze modele i wizualizacje doprowadziły do zrozumienia danych, jeżeli nie możemy przekazać wyników innym. W tym celu będziemy używali `rmarkdown`.  
+
+Można zainstalować kompletny pakiet `tidyverse` za pomocą funkcji **install.packages**:  
+
+- install.packages("tidyverse")  
+
+Mając wiedzę o tym, czym jest koncepcja `tidyverse`, możemy przejść do głównej części dzisiejszego warsztatu, czyli bezpośrednio do pakietu `dplyr`.  
+
+<br/><br/>
+
+# Dplyr
+
+<hr style="border:2px solid silver"> </hr>
+
+Pakiet `dplyr` udostępnia proste czasowniki (verbs) — funkcje, które odpowiadają najbardziej powszechnym zadaniom, związanym z manipulowaniem danymi. Dzielą się one na 4 podstawowe kategorie:  
+
+- column verbs — czasowniki kolumnowe; wykonują działania na kolumnach (zmiennych),  
+- row verbs — czasowniki wierszowe; wykonują działania na wierszach (obserwacjach),  
+- grouping verbs — czasowniki grupujące; wykonują działania na obserwacjach, zgrupowanych według pewnych kolumn,    
+- joining verbs — czasowniki łączące; wykonują łączenie kilku oddzielnych zbirów.  
+
+Oprócz tego `dplyr` posiada swoisty operator, który nazywa się **pipe**. ( **%>%** , skrót Rstudio — Ctrl[Cmd]+Shift+M). Celem pipe'u jest pomoc w napisaniu kodu w sposób łatwiejszy do odczytania i zrozumienia, pozbawiając się zbyt częstych nawiasów. Założymy ze mamy następujący ciąg funkcji:  
+
+```{r}
+x <- c(1, 2, 3.2)
+round(sqrt(log(max(x))), 2)
+```
+
+Mając jedynie 4 funkcje, które przekształcają zmienną x, już ciężko zrozumieć, jakim dokładnie transformacjom podlega zmienna. Pipe upraszcza to zagadnie w następujący sposób:  
+
+```{r include=FALSE}
+library(dplyr)
+```
+```{r}
+x %>% 
+  max() %>% 
+  log() %>% 
+  sqrt() %>% 
+  round(2)
+```
+
+Pipe pozwala ustalić kolejność przekształceń zmiennej. W tym przykładzie R najpierw wybierze największą wartość wektora x, potem znajdzie jej logarytm naturalny, pierwiastek i na koniec zaokrągla do części całkowitej. Argumenty każdej z funkcji są wskazywane w sposób zwyczajny, czyli w nawiasach obok każdej funkcji. Jeżeli dodatkowe argumenty nie są wymagane, nawiasy można opuścić. Taka struktura kodu pozwala:  
+
+- łatwo prześledzić kolejność, w której są dokonywane zmiany,  
+- łatwo odczytać nazwy funkcji oraz wszystkie ich argumenty.  
+
+> Warto pamiętać ze pipe działa nie tylko dla funkcji z pakietu `tidyverse`, lecz dla wszystkich funkcji, którym argumentem pierwszym jest zmienna klasy *data.frame* lub   innej klasy, która może być przekonwertowana do *data.frame*. W innych przypadkach R wyrzuci błąd, np. gdybyśmy chcieli zbudować na danych zwyczajny model regresji      liniowej:  
+
+```{r error = TRUE}
+starwars %>% 
+  lm(height~.)
+```
+
+Przed tym, jak zajmiemy się pierwszą rodziną czasowników, musimy poświęcić trochę czasu na zapoznanie się z danymi, które będą stanowiły przykłady praktyczne dla całego warsztatu.  
+
+<br/><br/>
+
+## Dane
+
+<hr style="border:2px solid silver"> </hr>
+
+Najpierw musimy podłączyć pakiet `dplyr`. Zrobić to można za pomocą funkcji **library**:
+
+```{r}
+library(dplyr)
+```
+
+Wszystkie możliwości `dplyr` rozpatrzymy na przykładzie zbioru danych gapminder. Zawiera on 1704 obserwacji danych zebranych przez Szwecką organizację Gapminder, dotyczących oczekiwanej długości życia (lifeExp), całkowitej liczby ludności (pop) i produktu krajowego brutto na człowieka, PKB per capita (gdpPercap) w 142 krajach światu w przedziale czasowym od 1952 do 2007 roku co 5 lat.  
+
+Dane są przechowywane w formacie csv, więc musimy skorzystać z odpowiedniej funkcji, która może odczytać taki format pliku. Wczytamy dane za pomocą wbudowanej **read.csv**. Pierwszym argumentem jest link lub ścieżka do pliku wraz z jego nazwą. Więcej o imporcie danych dowiedziecie na kolejnym warsztacie:  
+
+```{r}
+gap <- read.csv('https://csiro-data-school.github.io/r/data/gapminder.csv')
+```
+
+Zbiór danych **gap** musi się pojawić w rozdziale *Data* w zakładce *Environment* po prawej stronie RStudio. Możemy popatrzyć na zbiór, po prostu wpisując jego nazwę:  
+
+```{r rows.print=5, pages.print=10}
+gap
+```
+
+Na górze tabeli są zawarte nazwy wszystkich kolumn, natomiast wiersze stanowią obserwacje. Jednakże nie jest to najwygodniejszy sposób pierwszego zapoznania się z danymi. `dplyr` ma swoją wbudowaną funkcję **glimpse**, która w piękny sposób przedstawia strukturę zbioru wraz z klasą zmiennych oraz kilkoma pierwszymi obserwacjami. Każda kolumna zawsze zajmuje jeden oddzielny wiersz, a obserwacje są rozciągane do końca wiersza:  
+
+```{r}
+glimpse(gap)
+```
+
+Teraz przejdziemy bezpośrednio do każdej z wymienionych grup czasowników.  
+
+<br/><br/>
+
+## Column verbs
+
+<hr style="border:2px solid silver"> </hr>
+
+Czasowniki kolumnowe wykonują działania na kolumnach ramki danych. Do tej rodziny należą:  
+
+- select,  
+- rename,  
+- relocate,  
+- mutate.  
+
+Rozpatrzymy każdą z nich szczegółowo.  
+
+<br/><br/>
+
+### Select
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Często zdarza się, że zbiory danych zawierają setki, a nawet tysiące zmiennych. W tym przypadku pierwszym wyzwaniem jest często zawężenie do zmiennych, którymi naprawdę jesteśmy zainteresowani. Funkcja **select** pozwala wybrać ze zbioru danych tylko wskazane kolumny. Żeby to zrobić, musimy za pomocą pipe'u zastosować funkcję select do zbioru gap, wskazując jako argument funkcji 1 lub więcej zbędnych kolumn. Założymy, że chcemy wybrać z oryginalnego zbioru tylko kolumny rok (*year*) oraz kraj (*country*). Możemy zachować ten zmniejszony zbiór jako **gap_selected**. Tutaj i w następnych przykładach związanych z czasownikami kolumnowymi będzie wyświetlonych tylko 5 obserwacji z całej tabeli (ta rodzina funkcji w żaden sposób nie wpływa na wiersze ramki danych):  
+
+```{r}
+gap_selected <- gap %>%
+  select(country, year)
+```
+```{r echo=FALSE}
+gap_selected %>%
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Istnieje możliwość odwrotnie wyrzucić ze zbioru niepotrzebne kolumny. W tym celu wskazujemy obok kolumn znak minus:  
+
+```{r}
+gap_selected <- gap %>% 
+  select(-country, -year)
+```
+```{r echo=FALSE}
+gap_selected %>%
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Wybierać kolumny można i za pomocą wektora. Żeby to zrobić, musimy podać go jako argument funkcji:  
+
+```{r}
+col_names <-  c("year", "country")
+gap_selected <- gap %>% 
+  select(col_names)
+```
+```{r echo=FALSE}
+gap_selected %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Także można wybrać kolumny za pomocą zakresu liczbowego:  
+
+```{r}
+gap_selected <- gap %>% 
+  select(1:3)
+```
+```{r echo=FALSE}
+gap_selected %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Jednakże taka metoda jest trudniejsza do odczytu i może prowadzić do nieprawidłowych wyników, jeżeli kolejność kolumn została zmieniona.  
+
+Oprócz tego funkcja **select** posiada tzw. **select helpers** — funkcje, które pomagają wybierać kolumny według pewnych wzorów w nazwie. Najprostszą z nich jest **last_col**, która zwraca ostatnią kolumnę zbioru:  
+
+```{r}
+gap_selected <- gap %>% 
+  select(last_col())
+```
+```{r echo=FALSE}
+gap_selected %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Czasownik **starts_with** wybiera takie kolumny zbioru, których nazwa zaczyna się od pewnego wzoru. Jest to wyjątkowo korzystne w przypadkach, gdy mamy dużo kolumn o podobnych nazwach. Wskazujemy ten wzór jako argument funkcji. Argument *ignore.case* mówi o tym, czy R musi ignorować rozbieżności w dużych/małych literach (standardowo jest ustawiony na TAK):  
+
+```{r}
+gap_selected <- gap %>% 
+  select(starts_with("co", ignore.case = TRUE))
+```
+```{r echo=FALSE}
+gap_selected %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+**ends_with** działa w podobny sposób dla kolumn, których nazwa kończy się na pewny wzór:  
+
+```{r}
+gap_selected <- gap %>% 
+  select(ends_with("p"))
+```
+```{r echo=FALSE}
+gap_selected %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+**contains** może wybierać kolumny według wzoru, który niekoniecznie znajduje się na końcu lub na początku nazwy, a np. w środku:  
+
+```{r}
+gap_selected <- gap %>% 
+  select(contains("e"))
+```
+```{r echo=FALSE}
+gap_selected %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Otrzymaliśmy 4 kolumny, których nazwa zawiera przynajmniej jedną literą "e".  
+
+**matches** jest bardziej zaawansowanym narzędziem. Pozwala na wybieranie kolumn według skomplikowanych wzorów. Wzory te są podane za pomocą standardowych dla większości języków programowania **wyrażeń regex** (regex expressions):   
+
+```{r}
+gap_selected <- gap %>% 
+  select(matches("+Per+"))
+```
+```{r echo=FALSE}
+gap_selected %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Znajomość tych wyrażeń wymaga jednak osobnego warsztatu, więc nie będziemy się na tym skupiać dzisiaj.  
+
+<br/><br/>
+
+### Rename
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Czasownik **rename** pozwała zmienić nazwę jednej lub więcej kolumn. Argumenty do tej funkcji muszą być podane według wzoru: *nowa_nazwa = stara_nazwa*. Chcemy przemianować kolumny **pop**, **lifeExp**, **gdpPercap** na coś bardziej ludzkiego. W związku z tym naszymi postępowaniami będą:  
+
+```{r}
+gap_renamed <- gap %>% 
+  rename(population = pop,
+         life_expectancy = lifeExp,
+         gdp_per_cap = gdpPercap)
+```
+```{r echo=FALSE}
+gap_renamed %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+> Pamiętajcie, że R nie wymaga napisania argumentów funkcji w jednym wierszu. Taki sposób napisania kodu, gdy nazwa każdej nowej zmiennej zaczyna się od nowego wierszy,   jest łatwiejsza do zrozumienia i mówi o dobrym stylu.  
+
+<br/><br/>
+
+### Relocate
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Czasownik **relocate** pozwała zmienić kolejność, w której są przekodowane kolumny w zbiorze danych. W tym celu całą kolejność lub jej część wskazujemy jako argumenty funkcji, wpisując nazwy. Chcemy, żeby pierwszą kolumną był rok, dalej kraj, kontynent i liczba ludności. Dalszą kolejność zostawiamy bez zmian:  
+
+```{r}
+gap_relocated <- gap_renamed %>%
+  relocate(year, country, continent, population)
+```
+```{r echo=FALSE}
+gap_relocated %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+> **relocate** pozwała również zmienić nazwę.  
+
+> Zauważymy, że **select** tez pozwala na przemianowanie oraz na relokacje:  
+```{r}
+gap_relocated <- gap %>%
+  select(-pop,
+         -lifeExp,
+         -gdpPercap,
+         year,
+         country,
+         continent,
+         population = pop,
+         life_expectancy = lifeExp,
+         gdp_per_cap = gdpPercap)
+```
+```{r echo=FALSE}
+gap_relocated %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+<br/><br/>
+
+### Mutate
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Jedną z najważniejszych funkcji pakietu `dplyr` jest funkcja **mutate**. Ona pozwala dodawać zupełnie nowe kolumny do pierwotnego zbioru. Argumenty do tej funkcji muszą być podane według wzoru: *nowa_kolumna = jakies_dzialanie*. Rozpatrzymy jej zastosowanie na kilku przykładach. 
+
+Możemy obliczyć łączny PKB każdego kraju w każdym roku. W tym celu musimy po prostu przemnożyć liczbę ludności i PKB per capita:  
+
+```{r}
+gap_mutated <- gap_relocated %>%
+  mutate(gdp = gdp_per_cap * population)
+```
+```{r echo=FALSE}
+gap_mutated %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Dodatkowym argumentem do funkcji służy *.keep*, który odpowiada za to, jakie zmienne pojawią się w zbiorze. Przyjmuje kilka wartości:  
+
+- all — zostaną zachowane wszystkie zmienne pierwotne + wszystkie nowe zmienne,  
+- used — zmienne wykorzystane do obliczeń + wszystkie nowe zmienne,  
+- unused — zmienne niewykorzystane do obliczeń + wszystkie zmienne nowe,  
+- none — tylko nowe zmienne.  
+
+Zobaczymy jak to wygląda na przykładzie *.keep="used"*:  
+```{r}
+gap_mutated <- gap_relocated %>%
+  mutate(gdp = gdp_per_cap * population, .keep = "used")
+```
+```{r echo=FALSE}
+gap_mutated %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Nowa zmienna może być wprowadzona z wykorzystaniem dowolnych funkcji. Mogą to być jak podstawowe funkcje R'a np. *, mean, as.string, lm, tak i funkcje z innych pakietów. Dodamy np. do naszego zbioru łączna światową liczbę ludności za okres czasowy 1952-2007 (wv_pop_cumul) oraz losową zmienną x, która jest pierwiastkiem z 3459:  
+
+```{r}
+gap_mutated <- gap_relocated %>%
+  mutate(gdp = gdp_per_cap * population,
+         wv_pop_cumul = sum(population),
+         x = sqrt(3459))
+```
+```{r echo=FALSE}
+gap_mutated %>% 
+  head(5) %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Końcowy zbiór, na którym będziemy pracowali dalej, można otrzymać za pomocą ciągu następujących przekształceń:  
+
+```{r}
+gap_new <- gap %>% 
+  rename(gdp_pc = gdpPercap,
+         life_exp = lifeExp,
+         population = pop) %>%
+  relocate(year, country, continent, population) %>% 
+  mutate(gdp = gdp_pc * population)
+```
+```{r echo=FALSE}
+gap_new %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>% 
+  scroll_box(width = "650px", height= "200px") %>% 
+  kable_styling(position = "center")
+```
+
+<br/><br/>
+
+## Row verbs
+
+<hr style="border:2px solid silver"> </hr>
+
+Row verbs jest rodziną funkcji, które wykonują działania na wierszach (obserwacjach) zbioru danych. Do tych czasowników należą:  
+
+- arrange,  
+- slice,  
+- filter.  
+
+Zaczniemy od czasownika arrange.  
+
+<br/><br/>
+
+### Arrange
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+**arrange** pozwała uporządkować obserwacje według wartości w pewnych kolumnach zbioru. Żeby R wiedział, które to kolumny, musimy wskazać jedną lub więcej jako argumenty funkcji. Standardowo wartości są uporządkowane według kolejności rosnącej. Uporządkujemy nasze wartości według liczby ludności i oczekiwanej długości życia:  
+
+```{r}
+gap_new_arranged <- gap_new %>%
+  arrange(population, life_exp)
+```
+```{r echo=FALSE}
+gap_new_arranged %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>% 
+  scroll_box(width = "650px", height= "200px") %>% 
+  kable_styling(position = "center")
+```
+
+Żeby zamienić porządek na malejący, musimy skorzystać z funkcji **desc**. W naszym przypadku wygląda to następująco:  
+
+```{r}
+gap_new_arranged <- gap_new %>%
+  arrange(desc(population, life_exp))
+```
+```{r echo=FALSE}
+gap_new_arranged %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>% 
+  scroll_box(width = "650px", height= "200px") %>% 
+  kable_styling(position = "center")
+```
+
+<br/><br/>
+
+### Slice
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+**slice** umożliwia wybieranie części wierszy (obserwacji) z całego zbioru. Chcemy wybrać tylko obserwacje od 1000-cznej do ostatniej. W tym nam pomoże funkcja **nrow(zbior)**:  
+
+```{r}
+gap_new_sliced <- gap_new %>%
+  slice(1000:nrow(gap_new))
+```
+```{r echo=FALSE}
+gap_new_sliced %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>% 
+  scroll_box(width = "650px", height= "200px") %>% 
+  kable_styling(position = "center")
+```
+
+Zobaczymy, że zbiór naprawdę zmniejszył się ponownie, korzystając z funkcji nrow:  
+
+```{r}
+nrow(gap_new_sliced)
+```
+
+**slice** posiada kilka pomocników dla typowych przypadków użycia:  
+
+- slice_head — wybiera pierwsze n wierszy,  
+- slice_tail — ostatnie n wierszy,  
+- slice_sample — losowe n wierszy,  
+- slice_min — wiersze z najniższymi wartościami według zmiennej x,  
+- slice_max — wiersze z najwyższymi wartościami według zmiennej x.  
+
+Typowym zagadnieniem slice_min i slice_max będzie stworzenie tzw. top-n wyników. Chcemy zobaczyć 5 obserwacji z największym PKB per capita. Skorzystamy z funkcji slice_max. Uporządkujemy według PKB p.c. za pomocą argumentu *order_by*:  
+
+```{r}
+gap_new_top <- gap_new %>%
+  slice_max(n = 5, order_by = gdp_pc)
+```
+```{r echo=FALSE}
+gap_new_top %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+<br/><br/>
+
+### Filter
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Funkcja **filter** zachowuje tylko te wiersze, które spełniają warunki podane jako argumenty funkcji. Jeżeli wskazujemy kilka warunków, to są one łączone za pomocą standardowych operatorów logicznych języka R: **&**, **|**, **!**. Przefiltrujemy dane i zastawimy tylko te, które pochodzą z Europy w 2007 roku:  
+
+```{r}
+gap_new_filtered <- gap_new %>%
+  filter(year == 2007 & continent == "Europe")
+```
+```{r echo=FALSE}
+gap_new_filtered %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>% 
+  scroll_box(width = "650px", height= "200px") %>% 
+  kable_styling(position = "center")
+```
+
+Widać, że tabela zawiera tylko te obserwacje, które spełniają warunki logiczne.  
+
+Poza tym `dplyr` wprowadza również kilka innych pomocniczych pipe'ów. Jeden z nich to pipe **%in%**, który jest bardzo przydatnym zastąpieniem warunków logicznych typu *x == a | x == b*. Zamiast tego można napisać: *x %in% c(a, b)*. Skorzystamy z tego pipe'u i wybierzemy tylko te obserwacje, które dotyczą 1992 lub 2007 roku:  
+
+```{r}
+gap_new_filtered <- gap_new %>%
+  filter(year %in% c(1992, 2007))
+```
+```{r echo=FALSE}
+gap_new_filtered %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>% 
+  scroll_box(width = "650px", height= "200px") %>% 
+  kable_styling(position = "center")
+```
+
+Kolejnym przydatnym narzędziem jest funkcja **between**, która jest zastąpieniem warunków logicznych typu *x >= a & x <= b*. Takie warunki możemy przepisać jako: *between(x, a, b)*. Wybierzemy tylko te obserwacje, które dotyczą przestrzeni lat od 1992 do 2007 roku:  
+
+```{r}
+gap_new_filtered <- gap_new %>%
+  filter(between(year, 1992, 2007))
+```
+```{r echo=FALSE}
+gap_new_filtered %>%
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>% 
+  scroll_box(width = "650px", height= "200px") %>% 
+  kable_styling(position = "center")
+```
+
+<br/><br/>
+
+## Grouping verbs
+
+<hr style="border:2px solid silver"> </hr>
+
+Grouping verbs jest rodziną funkcji, które wykonują działania jednocześnie na wierszach (obserwacjach) i na kolumnach (zmiennych) ramki danych. Są jednymi z najważniejszych, powszechnie wykorzystanych funkcji pakietu `dplyr`. Do tych czasowników należą:  
+
+-group_by,  
+-summarize,  
+-count.  
+
+Zajmiemy się teraz każdym z czasowników oddzielnie.  
+
+<br/><br/>
+
+### Group_by
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Większość operacji na danych jest wykonywana na grupach zdefiniowanych przez zmienne, znajdujące w zbiorze danych. Na przykład gdy chcemy dowiedzieć się, ile wynosił średni PKB per capita dla poszczególnych kontynentów w poszczególnych latach, musimy najpierw pogrupować dane według kontynentów i według roku. W tym pomoże funkcja **group_by**. Argumentami funkcji są kolumny, według których dokonujemy grupowań:  
+
+```{r}
+gap_new_grouped <- gap_new %>%
+  group_by(continent, year)
+```
+```{r echo=FALSE}
+gap_new_grouped %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>% 
+  scroll_box(width = "650px", height= "200px") %>% 
+  kable_styling(position = "center")
+```
+
+<br/><br/>
+
+### Summarize
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Jednakże patrząc na dane gołym okiem, nie zobaczymy żadnych różnic. Wynika to z tego, że group_by nie oblicza statystyk łącznych. W tym celu musimy skorzystać z funkcji **summarize**. Składnia funkcji przypomina składnię mutate: *nowa_wartosc_grupowa = jakieś działanie*. Obliczymy wartość przeciętnego PKB per capita i średnią oczekiwaną długość życia według kontynentów i dla każdego odcinka czasu:  
+
+```{r}
+gap_new_summarized <- gap_new %>%
+  group_by(continent, year) %>% 
+  summarize(avg_life_exp = mean(life_exp),
+            avg_gdp_pc = mean(gdp_pc))
+```
+```{r echo=FALSE}
+gap_new_summarized %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>% 
+  scroll_box(width = "380px", height= "200px") %>% 
+  kable_styling(position = "center")
+```
+
+Możemy wymyślić sobie wszelkie dowolne zgrupowane podsumowania. Gorące polecam poświęcić trochę czasu na praktykę z własnymi przykładami, natomiast my idziemy dalej.  
+
+<br/><br/>
+
+### Count
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Istnieje również funkcja **count**, która pozwała szybko policzyć obserwacje dla każdej z grup, lub 1+ zmiennych. Chcielibyśmy policzyć, jak często PKB per capita przekroczył 75000 dla każdego z kontynentów. Wtedy musimy wykonać następujący ciąg transformacji:  
+
+```{r}
+gap_new_counted <- gap_new %>%
+  filter(gdp_pc >= 75000) %>% 
+  group_by(continent) %>% 
+  count()
+```
+```{r echo=FALSE}
+gap_new_counted %>% 
+  kable("html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+W całym zbiorze mieliśmy tylko 5 takich obserwacji i wszystkie pochodzą z Azji.  
+
+> Zauważymy, że funkcja count robi to samo, co i summarize, jeżeli wpiszemy funkcję **n**, która po prostu zwraca ilość:  
+
+```{r}
+gap_new_counted <- gap_new %>%
+  filter(gdp_pc >= 75000) %>% 
+  group_by(continent) %>% 
+  summarize(n = n())
+```
+```{r echo=FALSE}
+gap_new_counted %>% 
+  kable("html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+<br/><br/>
+
+## Joining verbs
+
+<hr style="border:2px solid silver"> </hr>
+
+Rzadko się zdarza, aby analiza obejmowała tylko jeden zbiór danych. Zwykle mamy wiele źródeł i musimy je połączyć, żeby odpowiedzieć na interesujące nas pytania. Wiele tabel danych nazywa się **tabelami relacyjnymi**, ponieważ ważne są stosunki między tabelami, a nie tylko wartości, które one zawierają.  
+
+Relacje są zawsze definiowane między parą tabel. Wszystkie inne relacje są budowane z tego prostego pomysłu: *relacje trzech lub więcej tabel są zawsze własnością relacji między każdą parą*. Czasami oba elementy pary mogą być tą samą tabelą. Jest to potrzebne, jeśli na przykład mamy zbiór ludzi i każda osoba ma odniesienie do swoich rodziców.  
+
+Zmienne używane do łączenia każdej pary tabel nazywane są **kluczami**. Klucz to zmienna (lub zestaw zmiennych), która jednoznacznie identyfikuje obserwację. W prostych przypadkach wystarczy jedna zmienna, aby zidentyfikować obserwację. Na przykład każdy kraj jest jednoznacznie identyfikowany przez jego nazwę. W innych przypadkach może być potrzebne więcej zmiennych. Na przykład, aby zidentyfikować indywidualną obserwację pogodową, potrzebujemy 4 zmiennych kluczowych: rok, miesiąc, dzień i godzinę.  
+
+Do pracy z tabelami relacyjnymi potrzebne są odpowiednie czasowniki. Istnieją 4 podrodziny tych czasowników:  
+
+- mutating joins — złączenia przekształcające, które dodają nowe zmienne do jednej ramki danych z pasujących obserwacji w innej. Dzieli się na:  
+  - inner joins — złączenia wewnętrzne,  
+  - outer joins — złączenia zewnętrze,    
+- filtering joins — złączenia filtrujące,  
+- set operations — operacje na zbiorach,
+- binding — wiązania.
+
+Aby dowiedzieć się, jak działają złączenia, dodatkowo będziemy używać grafiki: kolorowa kolumna reprezentuje zmienną kluczową, szara kolumna reprezentuje kolumnę wartościową, która jest przenoszona podczas złączenia. W tych przykładach pokażemy pojedynczą zmienną kluczową.  
+
+Zaczniemy od podrodziny inner join.  
+
+<br/><br/>
+
+### Inner join
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Najprostszym typem złączeń są **złączenia wewnętrzne** (inner_join). Złączenie wewnętrzne dopasowuje pare obserwacji, gdy ich klucze są równe. Dane wyjściowe złączenia wewnętrznego to nowa ramka danych, która zawiera klucz, wartości z tabeli pierwszej (oznaczymy jako **x**) oraz wartości z tabeli drugiej (oznaczymy jako **y**). Najważniejszą właściwością inner_join jest to, że niedopasowane wiersze nie są uwzględniane w wyniku. Oznacza to, że zazwyczaj złączenia wewnętrzne nie są używane w pracy z danymi, ponieważ zbyt łatwo jest stracić obserwacje.   
+
+<center>
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/inner-join.gif)  
+</center>
+
+Żeby zrozumieć, jak działają złączenia, stworzymy dwa nowe zbiory danych na podstawie już znanego nam zbioru Gapminder. Pierwszy zbiór będzie dotyczył PKB per capita w 2007 roku w Polsce, Niemach i Norwegii, drugi — oczekiwanej długości życia w Polsce, Niemczech i Hiszpanii w tym samym 2007 roku. Nazwiemy te zbiory *df1* i *df2* odpowiednio:  
+
+```{r}
+df1 <- gap %>%
+  filter(country %in% c("Poland", "Germany", "Norway") & year == 2007) %>% 
+  select(country, gdp_pc = gdpPercap)
+```
+```{r echo=FALSE}
+df1 %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+```{r}
+df2 <- gap %>%
+  filter(country %in% c("Poland", "Germany", "Spain") & year == 2007) %>% 
+  select(country, life_exp = lifeExp)
+```
+```{r echo=FALSE}
+df2 %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Teraz przejdziemy mianowicie do struktury funkcji inner_join. Taką samą strukturę mają wszystkie czasowniki typu join. Skorzystamy ze zwyczajnego pipe'u. Jako argument pierwszy wskazujemy drugi zbiór (zauważymy, że kolejność nie odgrywa znaczenia w przypadku inner_join). Używamy argumentu *by*, aby powiedzieć `dplyr`, która zmienna jest zmienną kluczową. Jeżeli zmienne kluczowe mają różne nazwy, piszemy je następująco: *by = c("zm.kluczowa z df1" = "zm.kluczowa z df2")*. W naszym przypadku nazwy kolumn kluczowych są jednakowe, wiec wystarczy po prostu wskazać nazwę tej kolumny. Zobaczymy, co się stanie, jeżeli spróbujemy połączyć dwa zbiory za pomocą funkcji inner_join. Zapiszemy nową tabelę jako df_joined:  
+
+```{r}
+df_joined <- df1 %>% 
+  inner_join(df2, by = "country")
+```
+```{r echo=FALSE}
+df_joined %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Widzimy, że w tabeli łącznej pozostały tylko dwie obserwacje, dla których istniały dane dotyczące zarówno PKB per capita, jak i oczekiwanej długości życia. 
+
+<br/><br/>
+
+### Outer joins
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Złączenia wewnętrzne zachowują obserwacje, które pojawiają się w obu tabelach. **Złączenia zewnętrzne** (outer joins) zachowują obserwacje, które pojawiają się w co najmniej jednej z tabel. Istnieją trzy typy złączeń zewnętrznych:
+
+- full_join — złączenie pełne,  
+- left_join — złączenie lewe,  
+- right_join — złączenie prawe.  
+
+Zaczniemy od funkcji **full_join**. Graficznie wygląda to tak:   
+
+<center>
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/full-join.gif)  
+</center>
+
+Złączenie pełne zachowa wszystkie obserwacje z obu tabel. Jeżeli dla którejś z tabel nie znamy wartości jakiejkolwiek kolumny, będzie ona przepisana jako **NA** (nieznana wartość). Założymy, że chcemy mieć wszystkie obserwacje z obu tabel w tabeli łącznej:  
+
+```{r}
+df_joined <- df1 %>% 
+  full_join(df2, by = "country")
+```
+```{r echo=FALSE}
+df_joined %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Wartość PKB per capita dla Hiszpanii oraz oczekiwana długość życia dla Norwegii są niewiadome i dlatego są przekodowane jako NA.  
+
+Trochę inaczej działa funkcja left_join:  
+
+<center>
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/left-join.gif)  
+
+</center>
+
+Złączenie lewe zachowa wszystkie obserwacje z tabeli x, do której łączymy drugą tabel y  oraz takie obserwacje z tabeli y, które mają odpowiednie wartości kluczowe w tabeli x:  
+
+```{r}
+df_joined <- df1 %>% 
+  left_join(df2, by = "country")
+```
+```{r echo=FALSE}
+df_joined %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Wartość oczekiwanej długości życia dla Norwegii nie jest zawarta w tabeli df1, więc jest przekodowana jako NA.  
+
+Funkcja right_join działa zupełnie odwrotnie:  
+
+<center>
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/right-join.gif)  
+
+</center>
+
+Złączenie prawe zachowa wszystkie obserwacje z tabeli y, która jest łączona do tabeli x oraz takie obserwacje z tabeli x, które mają odpowiednie wartości kluczowe w tabeli y:  
+
+```{r}
+df_joined <- df1 %>% 
+  right_join(df2, by = "country")
+```
+```{r echo=FALSE}
+df_joined %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Wartość PKB per capita dla Hiszpanii nie jest zawarta w tabeli df2, a więc jest przekodowana jako NA.  
+
+<br/><br/>
+
+### Filtering joins
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Filtering joins to złączenia, które filtrują obserwacje z jednej ramki danych na podstawie tego, czy pasują do obserwacji w drugiej tabeli.  
+
+Pierwsza funkcja **semi_join** zachowuje wszystkie obserwacje w tabeli x, które mają odpowiednik według kolumny kluczowej w tabeli y. Składnia funkcji jest taka sama, jak i w przypadku innych złączeń:  
+
+<center>
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/semi-join.gif)  
+</center>
+
+> Tabeli de facto nie są złączone, tabela y służy po prostu jako filtr.  
+
+Zastosujemy df2 jako filtr do tabeli df1:  
+
+```{r}
+df_filtered <- df1 %>% 
+  semi_join(df2, by = "country")
+```
+```{r echo=FALSE}
+df_filtered %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+W wyniku zostały zachowane tylko 2 obserwacje, które mają dane, dotyczące oczekiwanej długości życia z tabeli df2.  
+
+Druga funkcja **anti_join** odwrotnie wyrzuca wszystkie obserwacje z tabeli x, które mają odpowiednie wartości w kolumnie kluczowej w tabeli y:  
+
+<center>
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/anti-join.gif)  
+</center>
+
+```{r}
+df_joined <- df1 %>% 
+  anti_join(df2, by = "country")
+```
+```{r echo=FALSE}
+df_joined %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+W wyniku została zachowana tylko 1 obserwacja dla Norwegii, która nie miała danych, dotyczących oczekiwanej długości życia z tabeli df2.  
+
+<br/><br/>
+
+### Set operations
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+Czasowniki z rodziny set operations działają na pełnym wierszu, porównując wartości każdej zmiennej. Oczekują one, że obie tabele będą miały te same zmienne i traktują obserwacje jak zbiory. Do tej rodziny należą funkcje:  
+
+- intersect,  
+- union,  
+- setdiff.
+
+Zacznimy od funkcji **intersect**. Ona zwraca tylko takie obserwacje, które są zawarte jak w tabeli pierwszej (x), tak i w tabeli drugiej (y):   
+
+<center>
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/intersect.gif)
+</center>
+
+Żeby zrozumieć, jak ona działa musimy zmienić strukturę ramki danych df2 i zamiast kolumny life_exp wybrać kolumnę gdp_pc. Zapiszemy tabelę jako **df2_modified**:  
+
+```{r}
+df2_modified <- gap %>%
+  filter(country %in% c("Poland", "Germany", "Spain") & year == 2007) %>% 
+  select(country, gdp_pc = gdpPercap)
+```
+```{r echo=FALSE}
+df2_modified %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Teraz zobaczymy, co się stanie, jeżeli spróbujemy zastosować funkcje do 2 zbiorów, wskazując jako argument funkcji drugą tabelę:  
+
+```{r}
+df_set <- df1 %>% 
+  intersect(df2_modified)
+```
+```{r echo=FALSE}
+df_set %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Widzimy, że zostały zachowane 2 obserwacje, które istniały w obu zbiorach jednocześnie.  
+
+Zupełnie inaczej działa funkcja **setdiff**. Ona zwraca tylko takie obserwacje z tabeli x, których nie ma w tabeli y (przypomina funkcję anti_join):  
+
+<center>
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/setdiff.gif)
+</center>
+
+```{r}
+df_set <- df1 %>% 
+  setdiff(df2_modified)
+```
+```{r echo=FALSE}
+df_set %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+Ostatecznie zachowana została tylko obserwacja dotycząca Norwegii.  
+
+**union** z kolei zwraca unikalne obserwacje, zawarte w obu tabelach łącznie:  
+
+<center>
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/union.gif)
+</center>
+
+```{r message=FALSE, warning = FALSE}
+df_set <- df1 %>% 
+  union(df2_modified)
+```
+```{r echo=FALSE}
+df_set %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+W tabeli pozostały wszystkie obserwacje dla 4-ch krajów zawartych w obu zbiorach.  
+
+<br/><br/>
+
+### Binding
+
+<hr style="border:1px dotted lightGray"> </hr>
+
+W końcu zajmiemy się ostatnią podrodziną funkcji pakietu `dplyr`, a mianowicie podrodziną funkcji bindigs (wiązań). Ta rodzina funkcji zawiera tylko dwa czasowniki **bind_rows** i **bind_cols**, które są lepszą wersją bazowych funkcji wbudowanych w R. Żeby zobaczyć, jak to działa w praktyce, wprowadzimy najpierw nowy zbiór danych **df3**, który zawiera PKB per capita za 2007 rok dla Czech, Włoch i Szwecji:  
+
+```{r}
+df3 <- gap %>%
+  filter(country %in% c("Czech Republic", "Italy", "Sweden") & year == 2007) %>% 
+  select(country, gdp_pc = gdpPercap)
+```
+```{r echo=FALSE}
+df3 %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+bind_rows po prostu dorzuca wiersze ze zbioru y do zbioru x. Dodamy dane dotyczące PKB per capita dla nowych krajów ze zbioru df3 do zbioru df1:  
+
+```{r}
+df_bind <- df1 %>% 
+  bind_rows(df3)
+```
+```{r echo=FALSE}
+df_bind %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+> Jeżeli nazwy kolumn nie zgadzają się, to wszystkie wartości niewiadome będą zakodowane jako NA:  
+
+```{r}
+df_bind <- df1 %>% 
+  bind_rows(df2)
+```
+```{r echo=FALSE}
+df_bind %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+bind_cols natomiast dorzuca kolumny ze zbioru y do zbioru x. Działa prawie jak full_join, z jedynym wyjątkiem, że nie dopasuje wartości zgodnie z kolumną kluczową, a po prostu wkleja nowe kolumny. Dodamy dane dotyczące oczekiwanej długości życia ze zbioru df2 do zbioru df1:  
+
+```{r}
+df_bind <- df1 %>% 
+  bind_cols(df2)
+```
+```{r echo=FALSE}
+df_bind %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+<br/><br/>
+
+# Summary
+
+<hr style="border:2px solid silver"> </hr>
+
+Na koniec zrobimy krótki opis każdej z wymienionych dzisiaj funkcji:  
+
+```{r include=FALSE}
+opis <- data.frame(Funkcja = c("glimpse(x)",
+                               "select(.data, ...)",
+                               "rename", 
+                               "relocate", 
+                               "mutate", 
+                               "arrange",
+                               "slice",
+                               "filter",
+                               "group_by", 
+                               "summarize", 
+                               "count",
+                               "inner_join(x, y, by)",
+                               "full_join",
+                               "left_join",
+                               "right_join",
+                               "semi_join",
+                               "anti_join", 
+                               "intersect(x, y, ...)",
+                               "setdiff",
+                               "union",
+                               "bind_rows",
+                               "bind_cols"),
+                   Opis = c("Robi streszczenie ramki danych x, pokazując klasy kolumn wraz z pierwszymi obserwacjami. Podobne do str(), ale stara się pokazać jak najwięcej przykładów.",
+                            "Wybiera tylko wskazane kolumny z ramki danych. Posiada pomocnicze funkcje: last_col() — wybiera ostatnią kolumnę; starts_with/ends_with/contains/matches(match, ignore.case =TRUE) — wybiera kolumne których nazwy zaczynają się/kończą się/zawierają wzór/zawierają wyrażenie regularne match.",
+                            "Zmienia nazwy wymienionych kolumn.",
+                            "Zmienia kolejność kolumn w ramce danych.",
+                            "Dodaje nowe zmienne i zachowuje istniejące.",
+                            "Porządkuje wiersze ramki danych według wartości wybranych kolumn. Zmienić kolejność z rosnącej na malejącą można pomocnikiem desc.",
+                            "Wybiera wskazane wiersze według ich numeru. slice_head/slice_tail/slice_sample(.data, ..., n, prop) — wybiera n/proporcję wierszy od początku/z końca/losowych ramki danych; slice_min/slice_max(.data, order_by, ..., n, prop) — wybiera n/ proporcję wierszy z najniższymi wartościami według zmiennej x.",
+                            "Wybiera tylko te wiersze, które spełniają wskazane warunki logiczne.",
+                            "Konwertuje ramkę danych ją na zgrupowaną, operacje w której są wykonywane dla stworzonych grup.",
+                            "Oblicza statystyki podsumowujące dla grup.",
+                            "Oblicza liczebności dla grup.",
+                            "Dodaje kolumny z ramki danych y do ramki danych x za zmiennej kluczowej wskazanej w by. Zachowuje tylko pasujące wartości z obu ramek.",
+                            "...Zachowuje wszystkie wartosci z x oraz tylko pasujące wartości z y",
+                            "...Zachowuje wszystkie wartosci z y oraz tylko pasujące wartości z x",
+                            "...Zachowuje wszystkie wartosci z obu ramek",
+                            "Zwraca wszystkie wiersze ramki x z dopasowaniem w y.",
+                            "Zwraca wszystkie wiersze ramki x bez dopasowania w y.",
+                            "Zwraca obserwacje, które są zawarte w obu ramkach x i y jednocześnie.",
+                            "Zwraca takie obserwacje z ramki x, których nie ma w y",
+                            "Zwraca unikalne obserwacje, zawarte w ramkach x i y",
+                            "Wkleje wiersze z ramki y do ramki x",
+                            "Wkleje kolumny z ramki y do ramki x"))
+```
+```{r echo=FALSE}
+opis %>% 
+  kable("html", digits =3, format.args = list(scientific = FALSE)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "center")
+```
+
+> Pamiętamy, że nie musimy wskazywać argumentu *.data* / *x*, jeżeli korzystamy z pipe'u.  
+
+Spodziewam się, ze niniejszy warsztat pomógł w zrozumieniu tego, czym jest pakiet `dplyr` i jak można go zastosować podczas własnej pracy z danymi. Dziękuję za uwagę!  
+
+<div>

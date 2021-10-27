@@ -1,0 +1,149 @@
+---
+title: "Wizualizacja danych cz. II"
+author: "Yauheni Semianiuk"
+date: "18.03.2021"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+    number_sections: yes
+---
+
+```{css, include=FALSE}
+.starwars {
+  font-size: 16px;
+  font-family: "Computer Modern";
+  background-color: floralWhite;
+  border: 1px floralWhite;
+}
+```
+
+```{r include=FALSE}
+knitr::opts_chunk$set(class.source = "starwars")
+```
+
+<style type="text/css">
+
+ .main-container {background-color: yellow;}
+ 
+ body {
+  font: "Computer Modern";
+  font-size: 16px;
+ }
+
+</style>
+
+<br/><br/>
+
+<div align="justify">
+
+***
+
+# Mistrz Yoda
+
+<center>
+
+![](https://static.wikia.nocookie.net/starwars/images/b/b4/YodaDuel.jpg/revision/latest/scale-to-width-down/340?cb=20091201195359)
+
+</center>
+
+[Yoda](https://pl.wikipedia.org/wiki/Yoda)
+
+Żył w ostatnim tysiącleciu istnienia *Republiki*. **Jedi** jego czasów uważali go za jednego z najpotężniejszych i najmądrzejszych członków `Zakonu`. Mimo niewielkiego wzrostu i sędziwego wieku, jak większość Jedi, był niezwykle wygimnastykowany i zręczny.
+
+Rekompensowało to jego niewielką siłę fizyczną. Dowodził tego osiągając niezrównane zdolności w sztuce Ataru, technice walki mieczem świetlnym wykorzystującej akrobatykę i szybkość przeciwko sile. Do walki używał krótkiego miecza świetlnego o zielonym ostrzu.
+
+> Strach to ciemna strona Mocy. Strach wiedzie do gniewu, gniew do nienawiści, nienawiść prowadzi do cierpienia. Czuje w Tobie wielki strach.
+
+Krótko mówiąc Yoda:  
+
+- madry,
+
+- stary,
+
+- nadal mocny,
+
+- dziwnie mówi.
+
+Krótko mówiąc Yoda:  
+
+1. madry,
+
+   + bardzo madry,
+
+2. stary,
+
+3. nadal mocny,
+
+4. dziwnie mówi.
+
+``` {r}
+A <- 12
+B <- 2
+cat(A+B)
+```
+
+``` {r include=FALSE}
+library(dplyr)
+```
+
+```{r}
+Yoda <- starwars %>% 
+  filter(name == "Yoda")
+Yoda
+```
+
+<br/><br/>
+
+<hr style="border:2px solid green"> </hr>
+
+# Luke Skywalker
+
+![](https://ocdn.eu/pulscms-transforms/1/hGok9kpTURBXy9mM2Q1YWYxNmVhOTE1MGM0ZWU1ZWU3MTM5NjFjOWNkNS5qcGeTlQNoAM0B2M0BCpMFzQMUzQG8kwmmZWYxYTcxBoGhMAE/luke-skywalker.jpg)
+
+Syn Anakina Skywalkera i królowej Naboo – Padme Amidali, bliźniaczy brat Lei. Urodził się w ośrodku medycznym w pasie asteroid Polis Massa, gdzie jego matka została ukryta przed Vaderem. Wychował się na planecie Tatooine u swoich wujostwa – Beru i Owena Larsów na farmie wilgoci. Gdy na farmę Larsów trafia R2-D2 wraz ze swoim towarzyszem C-3PO, życie Luke’a zmienia się nie do poznania. Szukając niesfornego R2-D2, spotyka Bena Kenobiego, który zaznajamia go z Mocą i daje mu miecz ojca, który wziął po pojedynku z Anakinem Skywalkerem (wtedy Darth Vader). Wraz z Hanem Solo – pilotem Sokoła Millenium – opuszczają Tatooine, by przekazać Rebeliantom ukryte w pamięci R2-D2 plany stacji bojowej Imperium, zwanej Gwiazdą Śmierci. Wkrótce Obi-Wan ginie, a Luke w Bitwie o Yavin niszczy tę stację, pilotując X-winga. Po zwycięstwie przyłącza się na stałe do Rebelii.
+
+```{r}
+Luke <- starwars %>% 
+  filter(name == "Luke Skywalker")
+Luke
+```
+
+<br/><br/>
+
+<hr style="border:2px solid green"> </hr>
+
+# Palpatine
+
+![](https://cont3.naekranie.pl/media%2Fcache%2Farticle-cover%2F2020%2F07%2FPalpatine%20-%20Gwiezdne%20wojny_5f0c328178159.jpeg)
+
+Został wybrany na reprezentanta planety Naboo w Senacie Galaktycznym po śmierci swojego poprzednika – Vidara Kima. W roku 32 BBY Palpatine, średnio znany senator z Naboo, wybrany został przez Senat Republiki na urząd Najwyższego Kanclerza. Zastąpił na tym stanowisku Finisa Valoruma, oskarżanego o nie dość energiczne działania w związku z kryzysem na Naboo oraz zbytnie uleganie przekupnym biurokratom. Palpatine jako Darth Sidious osobiście doprowadził do tego kryzysu, potem zaś nakłonił królową Naboo do złożenia wotum nieufności wobec Valoruma.
+
+```{r}
+Palpatine <- starwars %>% 
+  filter(name == "Palpatine")
+Palpatine
+```
+
+<div>
+
+```{r}
+starwars
+```
+
+
+```{r}
+rmarkdown::paged_table(starwars)
+```
+
+```{r include=FALSE}
+library(kableExtra)
+```
+
+```{r}
+starwars %>% 
+  kable("html") %>%
+  scroll_box(width = "1000px", height= "400px") %>% 
+  kable_styling(position = "center")
+```
